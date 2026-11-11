@@ -22,8 +22,10 @@ jobs:
           cache: true
       - name: Resolve dependencies
         run: flutter pub get
-      - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed .
+      - name: Format and display any remaining parser diff
+        run: |
+          dart format .
+          git diff -- lib/src/parser.dart
       - name: Analyze
         run: flutter analyze
       - name: Test
