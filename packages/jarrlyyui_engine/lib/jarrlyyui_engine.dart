@@ -1,5 +1,3 @@
-library jarrlyyui_engine;
-
 export 'src/asset_loader.dart';
 export 'src/document.dart';
 export 'src/parser.dart';
