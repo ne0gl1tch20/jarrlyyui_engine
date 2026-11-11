@@ -59,11 +59,18 @@ class JuiParser {
     if (value is! Map<String, dynamic>) {
       throw JuiFormatException('Node must be an object', path: path);
     }
-    _rejectUnknownKeys(value, _nodeKeys, path);
     final type = value['type'];
     if (type is! String || !supportedTypes.contains(type)) {
       throw JuiFormatException('Unknown or missing node type: $type', path: '$path.type');
     }
+    final allowedKeys = switch (type) {
+      'column' || 'row' || 'padding' => {'type', 'children'},
+      'text' => {'type', 'text', 'fontSize'},
+      'button' => {'type', 'text', 'action'},
+      'spacer' => {'type'},
+      _ => {'type'},
+    };
+    _rejectUnknownKeys(value, allowedKeys, path);
 
     final text = value['text'];
     if ((type == 'text' || type == 'button') && text is! String) {
@@ -83,6 +90,9 @@ class JuiParser {
     }
     if (_leafTypes.contains(type) && rawChildren.isNotEmpty) {
       throw JuiFormatException('$type cannot have children', path: '$path.children');
+    }
+    if (type == 'padding' && rawChildren.length != 1) {
+      throw JuiFormatException('padding requires exactly one child', path: '$path.children');
     }
     if (_containerTypes.contains(type) && rawChildren.length > 200) {
       throw JuiFormatException('Container has too many children', path: '$path.children');
