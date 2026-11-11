@@ -15,7 +15,6 @@ class JuiParser {
   final int maxNodes;
 
   static const _rootKeys = {'schemaVersion', 'screen', 'root'};
-  static const _nodeKeys = {'type', 'text', 'fontSize', 'children', 'action'};
   static const _containerTypes = {'column', 'row', 'padding'};
   static const _leafTypes = {'text', 'button', 'spacer'};
   static const supportedTypes = {..._containerTypes, ..._leafTypes};
