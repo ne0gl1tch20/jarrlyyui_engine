@@ -1,0 +1,126 @@
+import 'dart:convert';
+
+import 'document.dart';
+
+/// Strict JSON-based JUI v1 parser. Scripts are data, never executable code.
+class JuiParser {
+  const JuiParser({
+    this.maxDocumentBytes = 256 * 1024,
+    this.maxDepth = 32,
+    this.maxNodes = 2000,
+  });
+
+  final int maxDocumentBytes;
+  final int maxDepth;
+  final int maxNodes;
+
+  static const _rootKeys = {'schemaVersion', 'screen', 'root'};
+  static const _nodeKeys = {'type', 'text', 'fontSize', 'children', 'action'};
+  static const _containerTypes = {'column', 'row', 'padding'};
+  static const _leafTypes = {'text', 'button', 'spacer'};
+  static const supportedTypes = {..._containerTypes, ..._leafTypes};
+
+  JuiDocument parse(String source) {
+    if (utf8.encode(source).length > maxDocumentBytes) {
+      throw const JuiFormatException('Document exceeds the size limit');
+    }
+
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(source);
+    } on FormatException catch (error) {
+      throw JuiFormatException('Invalid JSON: ${error.message}');
+    }
+    if (decoded is! Map<String, dynamic>) {
+      throw const JuiFormatException('Document root must be an object');
+    }
+    _rejectUnknownKeys(decoded, _rootKeys, r'$');
+
+    final version = decoded['schemaVersion'];
+    if (version != 1) {
+      throw JuiFormatException('Unsupported schemaVersion: $version');
+    }
+    final screen = decoded['screen'];
+    if (screen is! String || screen.isEmpty || screen.length > 80) {
+      throw const JuiFormatException('screen must be a non-empty string (max 80 chars)', path: r'$.screen');
+    }
+    var count = 0;
+    final root = _parseNode(decoded['root'], r'$.root', 0, () => ++count);
+    return JuiDocument(schemaVersion: 1, screenId: screen, root: root);
+  }
+
+  JuiNode _parseNode(Object? value, String path, int depth, int Function() nextCount) {
+    if (depth > maxDepth) {
+      throw JuiFormatException('Maximum nesting depth exceeded', path: path);
+    }
+    if (nextCount() > maxNodes) {
+      throw JuiFormatException('Maximum node count exceeded', path: path);
+    }
+    if (value is! Map<String, dynamic>) {
+      throw JuiFormatException('Node must be an object', path: path);
+    }
+    _rejectUnknownKeys(value, _nodeKeys, path);
+    final type = value['type'];
+    if (type is! String || !supportedTypes.contains(type)) {
+      throw JuiFormatException('Unknown or missing node type: $type', path: '$path.type');
+    }
+
+    final text = value['text'];
+    if ((type == 'text' || type == 'button') && text is! String) {
+      throw JuiFormatException('$type requires a text string', path: '$path.text');
+    }
+    if (text is String && text.length > 4000) {
+      throw JuiFormatException('Text exceeds 4000 characters', path: '$path.text');
+    }
+    final fontSize = value['fontSize'];
+    if (fontSize != null && (fontSize is! num || fontSize < 8 || fontSize > 72)) {
+      throw JuiFormatException('fontSize must be between 8 and 72', path: '$path.fontSize');
+    }
+
+    final rawChildren = value['children'] ?? const [];
+    if (rawChildren is! List) {
+      throw JuiFormatException('children must be an array', path: '$path.children');
+    }
+    if (_leafTypes.contains(type) && rawChildren.isNotEmpty) {
+      throw JuiFormatException('$type cannot have children', path: '$path.children');
+    }
+    if (_containerTypes.contains(type) && rawChildren.length > 200) {
+      throw JuiFormatException('Container has too many children', path: '$path.children');
+    }
+
+    final rawAction = value['action'];
+    Map<String, Object?> properties = {'type': type};
+    if (text is String) properties['text'] = text;
+    if (fontSize is num) properties['fontSize'] = fontSize;
+    if (type == 'button') {
+      if (rawAction is! Map<String, dynamic>) {
+        throw JuiFormatException('button requires an action object', path: '$path.action');
+      }
+      _rejectUnknownKeys(rawAction, {'id', 'arguments'}, '$path.action');
+      final id = rawAction['id'];
+      final args = rawAction['arguments'] ?? const <String, dynamic>{};
+      if (id is! String || !RegExp(r'^[a-z][a-z0-9_.-]{0,79}$').hasMatch(id)) {
+        throw JuiFormatException('Invalid action id', path: '$path.action.id');
+      }
+      if (args is! Map<String, dynamic>) {
+        throw JuiFormatException('arguments must be an object', path: '$path.action.arguments');
+      }
+      properties['action'] = {'id': id, 'arguments': Map<String, Object?>.from(args)};
+    } else if (rawAction != null) {
+      throw JuiFormatException('Only button nodes may declare actions', path: '$path.action');
+    }
+
+    final children = <JuiNode>[];
+    for (var i = 0; i < rawChildren.length; i++) {
+      children.add(_parseNode(rawChildren[i], '$path.children[$i]', depth + 1, nextCount));
+    }
+    return JuiNode(type: type, properties: properties, children: children);
+  }
+
+  void _rejectUnknownKeys(Map<String, dynamic> value, Set<String> allowed, String path) {
+    final unknown = value.keys.where((key) => !allowed.contains(key));
+    if (unknown.isNotEmpty) {
+      throw JuiFormatException('Unknown field: ${unknown.first}', path: path);
+    }
+  }
+}
