@@ -98,9 +98,13 @@ class JuiParser {
     }
 
     final rawAction = value['action'];
-    Map<String, Object?> properties = {'type': type};
-    if (text is String) properties['text'] = text;
-    if (fontSize is num) properties['fontSize'] = fontSize;
+    final Map<String, Object?> properties = {'type': type};
+    if (text is String) {
+      properties['text'] = text;
+    }
+    if (fontSize is num) {
+      properties['fontSize'] = fontSize;
+    }
     if (type == 'button') {
       if (rawAction is! Map<String, dynamic>) {
         throw JuiFormatException('button requires an action object', path: '$path.action');
