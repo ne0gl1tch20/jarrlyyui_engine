@@ -41,14 +41,22 @@ class JuiParser {
     }
     final screen = decoded['screen'];
     if (screen is! String || screen.isEmpty || screen.length > 80) {
-      throw const JuiFormatException('screen must be a non-empty string (max 80 chars)', path: r'$.screen');
+      throw const JuiFormatException(
+        'screen must be a non-empty string (max 80 chars)',
+        path: r'$.screen',
+      );
     }
     var count = 0;
     final root = _parseNode(decoded['root'], r'$.root', 0, () => ++count);
     return JuiDocument(schemaVersion: 1, screenId: screen, root: root);
   }
 
-  JuiNode _parseNode(Object? value, String path, int depth, int Function() nextCount) {
+  JuiNode _parseNode(
+    Object? value,
+    String path,
+    int depth,
+    int Function() nextCount,
+  ) {
     if (depth > maxDepth) {
       throw JuiFormatException('Maximum nesting depth exceeded', path: path);
     }
@@ -79,7 +87,8 @@ class JuiParser {
       throw JuiFormatException('Text exceeds 4000 characters', path: '$path.text');
     }
     final fontSize = value['fontSize'];
-    if (fontSize != null && (fontSize is! num || fontSize < 8 || fontSize > 72)) {
+    if (fontSize != null &&
+        (fontSize is! num || fontSize < 8 || fontSize > 72)) {
       throw JuiFormatException('fontSize must be between 8 and 72', path: '$path.fontSize');
     }
 
@@ -91,7 +100,10 @@ class JuiParser {
       throw JuiFormatException('$type cannot have children', path: '$path.children');
     }
     if (type == 'padding' && rawChildren.length != 1) {
-      throw JuiFormatException('padding requires exactly one child', path: '$path.children');
+      throw JuiFormatException(
+        'padding requires exactly one child',
+        path: '$path.children',
+      );
     }
     if (_containerTypes.contains(type) && rawChildren.length > 200) {
       throw JuiFormatException('Container has too many children', path: '$path.children');
