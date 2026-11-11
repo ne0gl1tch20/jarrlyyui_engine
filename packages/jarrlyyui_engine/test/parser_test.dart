@@ -22,28 +22,36 @@ void main() {
 
   test('rejects unknown node types', () {
     expect(
-      () => parser.parse('{"schemaVersion":1,"screen":"x","root":{"type":"script"}}'),
+      () => parser.parse(
+        '{"schemaVersion":1,"screen":"x","root":{"type":"script"}}',
+      ),
       throwsA(isA<JuiFormatException>()),
     );
   });
 
   test('rejects unknown properties rather than silently accepting them', () {
     expect(
-      () => parser.parse('{"schemaVersion":1,"screen":"x","root":{"type":"text","onTap":"evil"}}'),
+      () => parser.parse(
+        '{"schemaVersion":1,"screen":"x","root":{"type":"text","onTap":"evil"}}',
+      ),
       throwsA(isA<JuiFormatException>()),
     );
   });
 
   test('rejects buttons without a registered action identifier shape', () {
     expect(
-      () => parser.parse('{"schemaVersion":1,"screen":"x","root":{"type":"button","text":"Go"}}'),
+      () => parser.parse(
+        '{"schemaVersion":1,"screen":"x","root":{"type":"button","text":"Go"}}',
+      ),
       throwsA(isA<JuiFormatException>()),
     );
   });
 
   test('requires exactly one child in padding nodes', () {
     expect(
-      () => parser.parse('{"schemaVersion":1,"screen":"x","root":{"type":"padding","children":[]}}'),
+      () => parser.parse(
+        '{"schemaVersion":1,"screen":"x","root":{"type":"padding","children":[]}}',
+      ),
       throwsA(isA<JuiFormatException>()),
     );
   });
@@ -51,7 +59,9 @@ void main() {
   test('rejects excessive document size', () {
     const limited = JuiParser(maxDocumentBytes: 20);
     expect(
-      () => limited.parse('{"schemaVersion":1,"screen":"home","root":{"type":"text","text":"too long"}}'),
+      () => limited.parse(
+        '{"schemaVersion":1,"screen":"home","root":{"type":"text","text":"too long"}}',
+      ),
       throwsA(isA<JuiFormatException>()),
     );
   });
