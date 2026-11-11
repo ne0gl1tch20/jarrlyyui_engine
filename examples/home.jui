@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "screen": "home",
+  "root": {
+    "type": "column",
+    "children": [
+      {"type": "text", "text": "Guess The Number"},
+      {
+        "type": "button",
+        "text": "Play",
+        "action": {
+          "id": "navigation.open",
+          "arguments": {"route": "game"}
+        }
+      }
+    ]
+  }
+}
