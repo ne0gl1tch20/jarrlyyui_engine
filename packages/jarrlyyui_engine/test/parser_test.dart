@@ -41,6 +41,13 @@ void main() {
     );
   });
 
+  test('requires exactly one child in padding nodes', () {
+    expect(
+      () => parser.parse('{"schemaVersion":1,"screen":"x","root":{"type":"padding","children":[]}}'),
+      throwsA(isA<JuiFormatException>()),
+    );
+  });
+
   test('rejects excessive document size', () {
     const limited = JuiParser(maxDocumentBytes: 20);
     expect(
