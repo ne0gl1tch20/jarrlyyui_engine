@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
 
 import 'document.dart';
@@ -41,6 +38,3 @@ class JuiAssetLoader {
     return document;
   }
 }
-
-/// Utility for tests and host integrations that already hold UTF-8 bytes.
-Uint8List juiUtf8Bytes(String source) => Uint8List.fromList(utf8.encode(source));
