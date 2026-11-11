@@ -1,14 +1,14 @@
 # JUI document format: JSON v1
 
-**Status:** initial implementation contract. This format is intentionally JSON-based so it can be parsed with Dart's standard JSON decoder and validated deterministically. A future human-friendly syntax may compile to this same document model.
+**Status:** initial implementation contract. This format is intentionally JSON-based so it can be parsed with Dart's standard JSON decoder and validated deterministically. A future human-friendly syntax may compile to this same document model without creating a second runtime.
 
 ## Document envelope
 
 Every document has exactly these fields:
 
-- `schemaVersion`: integer, currently `1`.
-- `screen`: non-empty screen identifier, at most 80 characters.
-- `root`: one component node.
+- schemaVersion: integer, currently 1.
+- screen: non-empty screen identifier, at most 80 characters.
+- root: one component node.
 
 Example:
 
@@ -24,8 +24,8 @@ Example:
         "type": "button",
         "text": "Play",
         "action": {
-          "id": "navigation.open",
-          "arguments": {"route": "game"}
+          "id": "game.start",
+          "arguments": {}
         }
       }
     ]
@@ -37,21 +37,29 @@ Example:
 
 | Type | Fields | Meaning |
 | --- | --- | --- |
-| `column` | `type`, `children` | Vertical layout |
-| `row` | `type`, `children` | Horizontal layout |
-| `padding` | `type`, one `children` entry | 16 logical-pixel inset |
-| `text` | `type`, `text`, optional `fontSize` | Text label |
-| `button` | `type`, `text`, `action` | Host-dispatched action |
-| `spacer` | `type` | Fixed vertical spacing |
+| column | type, children | Vertical layout |
+| row | type, children | Horizontal layout |
+| padding | type, one children entry | 16 logical-pixel inset |
+| text | type, text, optional fontSize | Static text label |
+| button | type, text, action | Host-dispatched action |
+| spacer | type | Fixed vertical spacing |
 
 Unknown fields and node types are rejected. Text is limited to 4,000 characters. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
 
 ## Actions
 
-An action has an identifier matching `^[a-z][a-z0-9_.-]{0,79}$` and an optional JSON object of arguments. The renderer only forwards the declared identifier and arguments to the host callback. It does not resolve or execute actions itself.
+An action has an identifier matching ^[a-z][a-z0-9_.-]{0,79}$ and an optional JSON object of arguments. The renderer only forwards the declared identifier and arguments to the host callback. It does not resolve or execute actions itself.
 
-The host must enforce its own action allowlist, validate argument types and authorize the requested operation. Never trust an action merely because it appears in a valid JUI document.
+The host must enforce its own action allowlist, validate argument types and authorize the requested operation. Never trust an action merely because it appears in a valid JUI document. A JUI button is a request to the host, not permission to perform the operation.
 
-## Deliberately unsupported
+## GTN2 examples
 
-JUI v1 has no expressions, loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup or arbitrary method calls. Data binding and localization will be introduced through typed host-provided values in a later schema revision.
+The examples/gtn2/ directory contains static screen shells for Home, More, Settings, Save Slots, Traits, Talents, Mutators, Relics, Home Base and Results. They establish candidate screen IDs and action IDs for host integration.
+
+These examples do not fabricate live game data. The text explicitly marks where the host must provide real state. Until typed bindings and input controls exist, they are navigation/action prototypes rather than complete replacements for the corresponding GTN2 screens.
+
+## Deliberately unsupported in v1
+
+JUI v1 has no expressions, loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup, arbitrary method calls, live-state bindings, editable input controls, localization lookup, scrolling lists or theme tokens. These are not silently emulated. Future capabilities require an explicit schema/API revision, tests and backward-compatibility rules.
+
+Gameplay rules, save formats, economy, rewards, RNG, validation and progression remain Dart responsibilities in every version.
