@@ -4,16 +4,17 @@ A Flutter package for parsing and rendering declarative JUI v1 documents.
 
 ## Host APK setup
 
-Put the baseline UI files in the host application's assets:
+Copy the selected baseline UI files into the host application's assets:
 
 ```text
 assets/jui/
   screens/
     home.jui
+    more.jui
     settings.jui
 ```
 
-Declare the directory in the host app's `pubspec.yaml`:
+Declare the directory in the host app's pubspec.yaml:
 
 ```yaml
 flutter:
@@ -21,12 +22,11 @@ flutter:
     - assets/jui/
 ```
 
-This packages the scripts into the APK. The app can render them offline and on first launch.
+This packages the scripts into the APK. The app can render them offline and on first launch. Keep these bundled files as the immutable fallback even after remote bundle support is added.
 
 ## Load and render a screen
 
 ```dart
-import 'package:flutter/material.dart';
 import 'package:jarrlyyui_engine/jarrlyyui_engine.dart';
 
 final loader = JuiAssetLoader(basePath: 'assets/jui');
@@ -36,15 +36,22 @@ JuiRenderer(
   document: document,
   onAction: (actionId, arguments) async {
     // Check actionId against the host app's allowlist.
-    // Validate arguments and invoke existing Dart application logic.
+    // Validate argument names, types and values.
+    // Call existing Dart application/gameplay services.
   },
 );
 ```
 
-The loader uses Flutter's `AssetBundle` and performs no network requests. The renderer does not execute actions; it forwards declared action IDs to the host callback. The host owns authorization and all application state.
+The loader uses Flutter's AssetBundle and performs no network requests. The renderer does not execute actions; it forwards declared action IDs to the host callback. The host owns authorization and all application state.
+
+## GTN2 example screens
+
+See examples/gtn2/ and docs/GTN2_INTEGRATION.md. These are screen-shell examples using only the current v1 feature set. They are not yet full replacements for GTN2's dynamic or interactive screens.
 
 ## Current v1 nodes
 
-`column`, `row`, `padding`, `text`, `button`, `spacer`.
+column, row, padding, text, button, spacer.
 
-See [the language specification](../../docs/LANGUAGE_SPEC.md). Remote bundle updates are not implemented in this package version.
+Live data binding, editable inputs, localization, scrolling collections and theme tokens are not implemented yet. Do not hardcode changing game values into JUI files to work around that limitation.
+
+Remote bundle updates are not implemented in this package version.
