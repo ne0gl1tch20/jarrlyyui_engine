@@ -171,7 +171,7 @@ class JuiParser {
       for (final entry in value.entries) {
         frozen[entry.key] = _freezeJsonValue(
           entry.value,
-          '\$path.\${entry.key}',
+          '$path.${entry.key}',
           depth + 1,
           nextCount,
         );
@@ -181,7 +181,7 @@ class JuiParser {
     if (value is List) {
       return List<Object?>.unmodifiable([
         for (var i = 0; i < value.length; i++)
-          _freezeJsonValue(value[i], '\$path[\$i]', depth + 1, nextCount),
+          _freezeJsonValue(value[i], '$path[$i]', depth + 1, nextCount),
       ]);
     }
     if (value == null || value is String || value is num || value is bool) {
