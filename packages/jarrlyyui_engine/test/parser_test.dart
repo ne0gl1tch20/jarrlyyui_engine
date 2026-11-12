@@ -88,6 +88,26 @@ void main() {
     );
   });
 
+  test('validates repeat nodes with one item template', () {
+    final document = parser.parse(
+      '{"schemaVersion":1,"screen":"inventory","root":{"type":"repeat","binding":"inventory.items","children":[{"type":"text","binding":"item.name"}]}}',
+    );
+    expect(document.root.bindingPath, 'inventory.items');
+    expect(document.root.children, hasLength(1));
+    expect(document.root.children.single.bindingPath, 'item.name');
+  });
+
+  test('rejects repeat nodes without exactly one template child', () {
+    for (final children in ['[]', '[{"type":"text","text":"A"},{"type":"text","text":"B"}]']) {
+      expect(
+        () => parser.parse(
+          '{"schemaVersion":1,"screen":"x","root":{"type":"repeat","binding":"items","children":$children}}',
+        ),
+        throwsA(isA<JuiFormatException>()),
+      );
+    }
+  });
+
   test('validates declarative text input nodes', () {
     final document = parser.parse(
       '{"schemaVersion":1,"screen":"x","root":{"type":"input","id":"player.name","label":"Player name","placeholder":"Enter a name","binding":"player.name"}}',
