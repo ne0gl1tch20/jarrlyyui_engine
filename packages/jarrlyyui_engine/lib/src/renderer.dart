@@ -6,6 +6,7 @@ typedef JuiActionHandler = Future<void> Function(
   String actionId,
   Map<String, Object?> arguments,
 );
+typedef JuiInputHandler = Future<void> Function(String inputId, String value);
 
 /// Converts validated JUI nodes into ordinary Flutter widgets.
 class JuiRenderer extends StatelessWidget {
@@ -13,6 +14,7 @@ class JuiRenderer extends StatelessWidget {
     required this.document,
     required this.onAction,
     this.state = const {},
+    this.onInput,
     super.key,
   });
 
@@ -22,6 +24,7 @@ class JuiRenderer extends StatelessWidget {
   /// Immutable-by-convention view-model data supplied by the Dart host.
   /// JUI can read string values but cannot mutate or execute this state.
   final Map<String, Object?> state;
+  final JuiInputHandler? onInput;
 
   @override
   Widget build(BuildContext context) => _buildNode(document.root);
@@ -59,6 +62,20 @@ class JuiRenderer extends StatelessWidget {
               ? node.text!
               : _resolveTextBinding(node.bindingPath!),
           style: TextStyle(fontSize: node.number),
+        );
+      case 'input':
+        return TextFormField(
+          initialValue: node.bindingPath == null
+              ? null
+              : _resolveTextBinding(node.bindingPath!),
+          enabled: onInput != null,
+          decoration: InputDecoration(
+            labelText: node.label,
+            hintText: node.placeholder,
+          ),
+          onChanged: onInput == null
+              ? null
+              : (value) => onInput!(node.inputId!, value),
         );
       case 'button':
         return ElevatedButton(
