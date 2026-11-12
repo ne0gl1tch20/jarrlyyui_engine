@@ -50,7 +50,7 @@ Unknown fields and node types are rejected. Text is limited to 4,000 characters.
 
 An action has an identifier matching ^[a-z][a-z0-9_.-]{0,79}$ and an optional JSON object of arguments. The renderer only forwards the declared identifier and arguments to the host callback. It does not resolve or execute actions itself.
 
-The host must enforce its own action allowlist, validate argument types and authorize the requested operation. Never trust an action merely because it appears in a valid JUI document. A JUI button is a request to the host, not permission to perform the operation.
+The host must enforce its own action allowlist, validate argument types and authorize the requested operation. Never trust an action merely because it appears in a valid JUI document. The parser also applies its configured depth and node limits recursively to action arguments and freezes nested maps and lists before exposing them to the renderer. A JUI button is a request to the host, not permission to perform the operation.
 
 ## GTN2 examples
 
