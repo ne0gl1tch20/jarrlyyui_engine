@@ -42,10 +42,14 @@ Example:
 | padding | type, one children entry | 16 logical-pixel inset |
 | text | type, exactly one of text or binding, optional fontSize | Static label or read-only string binding |
 | button | type, text, action | Host-dispatched action |
-| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |
+| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |\n| repeat | type, binding, exactly one child template | Renders up to 100 map entries from a host-provided list |
 | spacer | type | Fixed vertical spacing |
 
 Unknown fields and node types are rejected. Literal text is limited to 4,000 characters. A text node may instead declare a `binding` path such as `player.displayName`; paths use dot-separated identifier segments only. The Dart host supplies the state map to the renderer. JUI can read only string values through text nodes. Missing paths and non-string values render as an empty string. Binding values are never evaluated as expressions and cannot invoke host methods. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
+
+## Collections
+
+A `repeat` node reads a list from a host-state binding and requires exactly one child template. The template can read string fields through `item.fieldName` bindings. Entries that are not maps with string keys are skipped. Rendering is capped at 100 entries to bound widget creation. This is a display-only collection: JUI cannot create, mutate, sort or persist the list. The host supplies the collection and remains responsible for all item actions and business rules.
 
 ## Inputs
 
@@ -65,6 +69,6 @@ These examples do not fabricate live game data. The text explicitly marks where 
 
 ## Deliberately unsupported in v1
 
-JUI v1 has no expressions, loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup, arbitrary method calls, localization lookup, scrolling lists or theme tokens. Read-only string text bindings and host-dispatched text inputs are supported; typed numeric/boolean formatting and collection bindings are not. These are not silently emulated. Future capabilities require an explicit schema/API revision, tests and backward-compatibility rules.
+JUI v1 has no expressions, arbitrary loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup, arbitrary method calls, localization lookup, virtualized scrolling lists or theme tokens. Read-only string text bindings, host-dispatched text inputs and bounded list rendering through `repeat` are supported; typed numeric/boolean formatting is not. These are not silently emulated. Future capabilities require an explicit schema/API revision, tests and backward-compatibility rules.
 
 Gameplay rules, save formats, economy, rewards, RNG, validation and progression remain Dart responsibilities in every version.
