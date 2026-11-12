@@ -56,7 +56,7 @@ The host must enforce its own action allowlist, validate argument types and auth
 
 The examples/gtn2/ directory contains static screen shells for Home, More, Settings, Save Slots, Traits, Talents, Mutators, Relics, Home Base and Results. They establish candidate screen IDs and action IDs for host integration.
 
-These examples do not fabricate live game data. The text explicitly marks where the host must provide real state. Until typed bindings and input controls exist, they are navigation/action prototypes rather than complete replacements for the corresponding GTN2 screens.
+These examples do not fabricate live game data. The text explicitly marks where the host must provide real state. They are navigation/action prototypes rather than complete replacements for the corresponding GTN2 screens. The examples/bindings/player_card.jui file demonstrates the supported read-only string binding syntax.
 
 ## Deliberately unsupported in v1
 
