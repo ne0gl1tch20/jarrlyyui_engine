@@ -88,7 +88,6 @@ void main() {
     );
   });
 
-
   test('accepts a typed read-only text binding path', () {
     final document = parser.parse(
       '{"schemaVersion":1,"screen":"x","root":{"type":"text","binding":"player.displayName"}}',
