@@ -65,7 +65,9 @@ class JuiRenderer extends StatelessWidget {
         );
       case 'row':
         return Row(
-          children: node.children.map(_buildNode).toList(growable: false),
+          children: node.children
+              .map((child) => _buildNode(child, item: item))
+              .toList(growable: false),
         );
       case 'padding':
         return Padding(
