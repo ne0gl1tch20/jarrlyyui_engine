@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "screen": "player_card",
+  "root": {
+    "type": "column",
+    "children": [
+      {"type": "text", "text": "Player"},
+      {"type": "text", "binding": "player.displayName"},
+      {"type": "text", "binding": "player.level"}
+    ]
+  }
+}
