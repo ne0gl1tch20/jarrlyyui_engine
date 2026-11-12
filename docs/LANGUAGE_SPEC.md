@@ -41,10 +41,15 @@ Example:
 | row | type, children | Horizontal layout |
 | padding | type, one children entry | 16 logical-pixel inset |
 | text | type, exactly one of text or binding, optional fontSize | Static label or read-only string binding |
-| button | type, text, action | Host-dispatched action |\n| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |
+| button | type, text, action | Host-dispatched action 
+| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |
 | spacer | type | Fixed vertical spacing |
 
 Unknown fields and node types are rejected. Literal text is limited to 4,000 characters. A text node may instead declare a `binding` path such as `player.displayName`; paths use dot-separated identifier segments only. The Dart host supplies the state map to the renderer. JUI can read only string values through text nodes. Missing paths and non-string values render as an empty string. Binding values are never evaluated as expressions and cannot invoke host methods. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
+
+## Inputs
+
+An `input` node declares a stable input ID, a visible label and an optional placeholder. An optional `binding` path supplies its initial string value from host state. The renderer reports edits through the separate `JuiInputHandler(inputId, value)` callback. If no input handler is supplied, the field is disabled. JUI does not write to the state map, persist values or validate game-specific rules; the Dart host owns those responsibilities. Input IDs use the same restricted identifier shape as action IDs.
 
 ## Actions
 
