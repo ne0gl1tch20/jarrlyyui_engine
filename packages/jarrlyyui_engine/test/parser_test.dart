@@ -65,4 +65,27 @@ void main() {
       throwsA(isA<JuiFormatException>()),
     );
   });
+
+  test('bounds nested action argument depth', () {
+    const limited = JuiParser(maxDepth: 2);
+    expect(
+      () => limited.parse(
+        '{"schemaVersion":1,"screen":"x","root":{"type":"button","text":"Go","action":{"id":"game.submit","arguments":{"nested":{"value":"x"}}}}}',
+      ),
+      throwsA(isA<JuiFormatException>()),
+    );
+  });
+
+  test('deeply freezes nested action arguments', () {
+    final document = parser.parse(
+      '{"schemaVersion":1,"screen":"x","root":{"type":"button","text":"Go","action":{"id":"game.submit","arguments":{"nested":{"value":"x"}}}}}',
+    );
+    final nested = document.root.actionArguments['nested'] as Map;
+
+    expect(
+      () => nested['value'] = 'changed',
+      throwsUnsupportedError,
+    );
+  });
+
 }
