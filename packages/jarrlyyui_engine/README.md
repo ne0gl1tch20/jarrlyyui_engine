@@ -53,8 +53,8 @@ See examples/gtn2/ and docs/GTN2_INTEGRATION.md. These are screen-shell examples
 
 ## Current v1 nodes
 
-column, row, padding, text, button, spacer.
+column, row, padding, text, button, input, repeat and spacer.
 
-Read-only string text bindings are supported through dot-separated paths such as `player.displayName`, resolved from the host-provided `state` map. Missing or non-string values render as empty text. Numeric/boolean formatting, editable inputs, localization, scrolling collections and theme tokens are not implemented yet. Do not hardcode changing game values into JUI files to work around those limitations.
+Read-only string text bindings are supported through dot-separated paths such as `player.displayName`, resolved from the host-provided `state` map. Missing or non-string values render as empty text. Text inputs dispatch edits through an optional `JuiInputHandler`; without a host callback, inputs are disabled. `repeat` renders at most 100 host-provided map entries and exposes string fields as `item.fieldName`. Numeric/boolean formatting, localization lookup, virtualized scrolling and theme tokens are not implemented yet. Do not hardcode changing game values into JUI files to work around those limitations.
 
 Remote bundle updates are not implemented in this package version.
