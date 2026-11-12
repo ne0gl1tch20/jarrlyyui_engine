@@ -41,7 +41,7 @@ Example:
 | row | type, children | Horizontal layout |
 | padding | type, one children entry | 16 logical-pixel inset |
 | text | type, exactly one of text or binding, optional fontSize | Static label or read-only string binding |
-| button | type, text, action | Host-dispatched action 
+| button | type, text, action | Host-dispatched action |
 | input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |
 | spacer | type | Fixed vertical spacing |
 
