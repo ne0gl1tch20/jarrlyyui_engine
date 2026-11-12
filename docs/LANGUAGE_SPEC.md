@@ -40,11 +40,11 @@ Example:
 | column | type, children | Vertical layout |
 | row | type, children | Horizontal layout |
 | padding | type, one children entry | 16 logical-pixel inset |
-| text | type, text, optional fontSize | Static text label |
+| text | type, exactly one of text or binding, optional fontSize | Static label or read-only string binding |
 | button | type, text, action | Host-dispatched action |
 | spacer | type | Fixed vertical spacing |
 
-Unknown fields and node types are rejected. Text is limited to 4,000 characters. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
+Unknown fields and node types are rejected. Literal text is limited to 4,000 characters. A text node may instead declare a `binding` path such as `player.displayName`; paths use dot-separated identifier segments only. The Dart host supplies the state map to the renderer. JUI can read only string values through text nodes. Missing paths and non-string values render as an empty string. Binding values are never evaluated as expressions and cannot invoke host methods. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
 
 ## Actions
 
@@ -60,6 +60,6 @@ These examples do not fabricate live game data. The text explicitly marks where 
 
 ## Deliberately unsupported in v1
 
-JUI v1 has no expressions, loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup, arbitrary method calls, live-state bindings, editable input controls, localization lookup, scrolling lists or theme tokens. These are not silently emulated. Future capabilities require an explicit schema/API revision, tests and backward-compatibility rules.
+JUI v1 has no expressions, loops, imports, reflection, script evaluation, network access, filesystem access, dynamic component lookup, arbitrary method calls, editable input controls, localization lookup, scrolling lists or theme tokens. Read-only string text bindings are supported; typed numeric/boolean formatting and collection bindings are not. These are not silently emulated. Future capabilities require an explicit schema/API revision, tests and backward-compatibility rules.
 
 Gameplay rules, save formats, economy, rewards, RNG, validation and progression remain Dart responsibilities in every version.
