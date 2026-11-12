@@ -15,7 +15,7 @@ class JuiParser {
   final int maxNodes;
 
   static const _rootKeys = {'schemaVersion', 'screen', 'root'};
-  static const _containerTypes = {'column', 'row', 'padding'};
+  static const _containerTypes = {'column', 'row', 'padding', 'repeat'};
   static const _leafTypes = {'text', 'button', 'input', 'spacer'};
   static const supportedTypes = {..._containerTypes, ..._leafTypes};
 
@@ -78,6 +78,7 @@ class JuiParser {
       'text' => {'type', 'text', 'binding', 'fontSize'},
       'button' => {'type', 'text', 'action'},
       'input' => {'type', 'id', 'label', 'placeholder', 'binding'},
+      'repeat' => {'type', 'binding', 'children'},
       'spacer' => {'type'},
       _ => {'type'},
     };
@@ -104,6 +105,14 @@ class JuiParser {
       throw JuiFormatException(
         'button requires a text string',
         path: '$path.text',
+      );
+    }
+
+    if (type == 'repeat' &&
+        (binding is! String || !_isValidBindingPath(binding))) {
+      throw JuiFormatException(
+        'repeat requires a valid binding path',
+        path: '$path.binding',
       );
     }
 
@@ -161,6 +170,12 @@ class JuiParser {
     if (_leafTypes.contains(type) && rawChildren.isNotEmpty) {
       throw JuiFormatException(
         '$type cannot have children',
+        path: '$path.children',
+      );
+    }
+    if (type == 'repeat' && rawChildren.length != 1) {
+      throw JuiFormatException(
+        'repeat requires exactly one template child',
         path: '$path.children',
       );
     }
