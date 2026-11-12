@@ -28,7 +28,7 @@ class JuiParser {
     try {
       decoded = jsonDecode(source);
     } on FormatException catch (error) {
-      throw JuiFormatException('Invalid JSON: \${error.message}');
+      throw JuiFormatException('Invalid JSON: ${error.message}');
     }
     if (decoded is! Map<String, dynamic>) {
       throw const JuiFormatException('Document root must be an object');
@@ -229,7 +229,7 @@ class JuiParser {
       for (final entry in value.entries) {
         frozen[entry.key] = _freezeJsonValue(
           entry.value,
-          '$path.\${entry.key}',
+          '$path.${entry.key}',
           depth + 1,
           nextCount,
         );
@@ -256,7 +256,7 @@ class JuiParser {
     final unknown = value.keys.where((key) => !allowed.contains(key));
     if (unknown.isNotEmpty) {
       throw JuiFormatException(
-        'Unknown field: \${unknown.first}',
+        'Unknown field: ${unknown.first}',
         path: path,
       );
     }
