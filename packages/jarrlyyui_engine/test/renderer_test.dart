@@ -117,7 +117,9 @@ void main() {
     },
   );
 
-  testWidgets('renders bounded collection templates with item bindings', (tester) async {
+  testWidgets(
+    'renders bounded collection templates with item bindings',
+    (tester) async {
     final document = const JuiParser().parse(
       '{"schemaVersion":1,"screen":"inventory","root":{"type":"repeat","binding":"inventory.items","children":[{"type":"row","children":[{"type":"text","binding":"item.name"},{"type":"text","binding":"item.quantity"}]}]}}',
     );
@@ -141,10 +143,10 @@ void main() {
       ),
     );
 
-    expect(find.text('Sword'), findsOneWidget);
-    expect(find.text('Shield'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
-    expect(find.text('1'), findsOneWidget);
-  });
-
+      expect(find.text('Sword'), findsOneWidget);
+      expect(find.text('Shield'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+    },
+  );
 }
