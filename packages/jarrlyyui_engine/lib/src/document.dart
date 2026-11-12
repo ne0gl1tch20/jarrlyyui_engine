@@ -28,6 +28,9 @@ class JuiNode {
 
   String? get text => properties['text'] as String?;
   String? get bindingPath => properties['binding'] as String?;
+  String? get inputId => properties['id'] as String?;
+  String? get label => properties['label'] as String?;
+  String? get placeholder => properties['placeholder'] as String?;
   double? get number => (properties['fontSize'] as num?)?.toDouble();
   String? get actionId => (properties['action'] as Map?)?['id'] as String?;
   Map<String, Object?> get actionArguments => Map<String, Object?>.from(
