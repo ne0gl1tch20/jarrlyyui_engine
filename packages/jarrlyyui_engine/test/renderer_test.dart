@@ -85,5 +85,30 @@ void main() {
 
       expect(find.text(''), findsOneWidget);
     },
-  );
+  );  testWidgets('dispatches input changes through the host callback', (tester) async {
+    final document = const JuiParser().parse(
+      '{"schemaVersion":1,"screen":"settings","root":{"type":"input","id":"settings.player_name","label":"Player name","placeholder":"Enter a name"}}',
+    );
+    String? changedId;
+    String? changedValue;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: JuiRenderer(
+            document: document,
+            onAction: (_, __) async {},
+            onInput: (id, value) async {
+              changedId = id;
+              changedValue = value;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextFormField), 'Ada');
+    expect(changedId, 'settings.player_name');
+    expect(changedValue, 'Ada');
+  });
 }
