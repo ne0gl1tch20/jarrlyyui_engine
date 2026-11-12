@@ -98,7 +98,10 @@ void main() {
   });
 
   test('rejects repeat nodes without exactly one template child', () {
-    for (final children in ['[]', '[{"type":"text","text":"A"},{"type":"text","text":"B"}]']) {
+    for (final children in [
+      '[]',
+      '[{"type":"text","text":"A"},{"type":"text","text":"B"}]',
+    ]) {
       expect(
         () => parser.parse(
           '{"schemaVersion":1,"screen":"x","root":{"type":"repeat","binding":"items","children":$children}}',
