@@ -88,6 +88,30 @@ void main() {
     );
   });
 
+  test('validates declarative text input nodes', () {
+    final document = parser.parse(
+      '{"schemaVersion":1,"screen":"x","root":{"type":"input","id":"player.name","label":"Player name","placeholder":"Enter a name","binding":"player.name"}}',
+    );
+    expect(document.root.inputId, 'player.name');
+    expect(document.root.label, 'Player name');
+    expect(document.root.placeholder, 'Enter a name');
+    expect(document.root.bindingPath, 'player.name');
+  });
+
+  test('rejects invalid input identifiers and missing labels', () {
+    for (final node in [
+      '{"type":"input","id":"Bad ID","label":"Name"}',
+      '{"type":"input","id":"player.name"}',
+    ]) {
+      expect(
+        () => parser.parse(
+          '{"schemaVersion":1,"screen":"x","root":$node}',
+        ),
+        throwsA(isA<JuiFormatException>()),
+      );
+    }
+  });
+
   test('accepts a typed read-only text binding path', () {
     final document = parser.parse(
       '{"schemaVersion":1,"screen":"x","root":{"type":"text","binding":"player.displayName"}}',
