@@ -170,7 +170,7 @@ class JuiParser {
       _rejectUnknownKeys(rawAction, {'id', 'arguments'}, '$path.action');
       final id = rawAction['id'];
       final args = rawAction['arguments'] ?? const <String, dynamic>{};
-      if (id is! String || !RegExp(r'^[a-z][a-z0-9_.-]{0,79}
+      if (id is! String || !RegExp(r'^[a-z][a-z0-9_.-]{0,79}$').hasMatch(id)) {
         throw JuiFormatException(
           'Invalid action id',
           path: '$path.action.id',
