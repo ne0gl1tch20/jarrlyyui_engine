@@ -34,6 +34,9 @@ final document = await loader.loadScreen('home');
 
 JuiRenderer(
   document: document,
+  state: const {
+    'player': {'displayName': 'Player One'},
+  },
   onAction: (actionId, arguments) async {
     // Check actionId against the host app's allowlist.
     // Validate argument names, types and values.
@@ -52,6 +55,6 @@ See examples/gtn2/ and docs/GTN2_INTEGRATION.md. These are screen-shell examples
 
 column, row, padding, text, button, spacer.
 
-Live data binding, editable inputs, localization, scrolling collections and theme tokens are not implemented yet. Do not hardcode changing game values into JUI files to work around that limitation.
+Read-only string text bindings are supported through dot-separated paths such as `player.displayName`, resolved from the host-provided `state` map. Missing or non-string values render as empty text. Numeric/boolean formatting, editable inputs, localization, scrolling collections and theme tokens are not implemented yet. Do not hardcode changing game values into JUI files to work around those limitations.
 
 Remote bundle updates are not implemented in this package version.
