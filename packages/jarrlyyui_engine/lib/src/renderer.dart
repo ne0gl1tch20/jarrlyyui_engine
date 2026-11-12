@@ -12,14 +12,28 @@ class JuiRenderer extends StatelessWidget {
   const JuiRenderer({
     required this.document,
     required this.onAction,
+    this.state = const {},
     super.key,
   });
 
   final JuiDocument document;
   final JuiActionHandler onAction;
 
+  /// Immutable-by-convention view-model data supplied by the Dart host.
+  /// JUI can read string values but cannot mutate or execute this state.
+  final Map<String, Object?> state;
+
   @override
   Widget build(BuildContext context) => _buildNode(document.root);
+
+  String _resolveTextBinding(String path) {
+    Object? value = state;
+    for (final segment in path.split('.')) {
+      if (value is! Map) return '';
+      value = value[segment];
+    }
+    return value is String ? value : '';
+  }
 
   Widget _buildNode(JuiNode node) {
     switch (node.type) {
@@ -41,7 +55,9 @@ class JuiRenderer extends StatelessWidget {
         );
       case 'text':
         return Text(
-          node.text!,
+          node.bindingPath == null
+              ? node.text!
+              : _resolveTextBinding(node.bindingPath!),
           style: TextStyle(fontSize: node.number),
         );
       case 'button':
