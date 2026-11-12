@@ -88,4 +88,27 @@ void main() {
     );
   });
 
+
+  test('accepts a typed read-only text binding path', () {
+    final document = parser.parse(
+      '{"schemaVersion":1,"screen":"x","root":{"type":"text","binding":"player.displayName"}}',
+    );
+    expect(document.root.bindingPath, 'player.displayName');
+    expect(document.root.text, isNull);
+  });
+
+  test('rejects malformed and ambiguous text bindings', () {
+    for (final node in [
+      '{"type":"text","binding":"player..name"}',
+      '{"type":"text","text":"literal","binding":"player.name"}',
+    ]) {
+      expect(
+        () => parser.parse(
+          '{"schemaVersion":1,"screen":"x","root":$node}',
+        ),
+        throwsA(isA<JuiFormatException>()),
+      );
+    }
+  });
+
 }
