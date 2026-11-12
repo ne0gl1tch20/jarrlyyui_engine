@@ -101,9 +101,7 @@ class JuiRenderer extends StatelessWidget {
         final collection = _resolveStateValue(node.bindingPath!);
         if (collection is! List) return const SizedBox.shrink();
         final children = <Widget>[];
-        for (var index = 0;
-            index < collection.length && index < 100;
-            index++) {
+        for (var index = 0; index < collection.length && index < 100; index++) {
           final entry = collection[index];
           if (entry is Map && entry.keys.every((key) => key is String)) {
             children.add(
