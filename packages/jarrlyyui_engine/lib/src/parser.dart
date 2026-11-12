@@ -130,7 +130,16 @@ class JuiParser {
       if (args is! Map<String, dynamic>) {
         throw JuiFormatException('arguments must be an object', path: '$path.action.arguments');
       }
-      properties['action'] = {'id': id, 'arguments': Map<String, Object?>.from(args)};
+      final frozenArguments = _freezeJsonValue(
+        args,
+        '$path.action.arguments',
+        depth + 1,
+        nextCount,
+      ) as Map<String, Object?>;
+      properties['action'] = {
+        'id': id,
+        'arguments': frozenArguments,
+      };
     } else if (rawAction != null) {
       throw JuiFormatException('Only button nodes may declare actions', path: '$path.action');
     }
@@ -140,6 +149,45 @@ class JuiParser {
       children.add(_parseNode(rawChildren[i], '$path.children[$i]', depth + 1, nextCount));
     }
     return JuiNode(type: type, properties: properties, children: children);
+  }
+
+  Object? _freezeJsonValue(
+    Object? value,
+    String path,
+    int depth,
+    int Function() nextCount,
+  ) {
+    if (depth > maxDepth) {
+      throw JuiFormatException(
+        'Maximum nesting depth exceeded',
+        path: path,
+      );
+    }
+    if (nextCount() > maxNodes) {
+      throw JuiFormatException('Maximum node count exceeded', path: path);
+    }
+    if (value is Map<String, dynamic>) {
+      final frozen = <String, Object?>{};
+      for (final entry in value.entries) {
+        frozen[entry.key] = _freezeJsonValue(
+          entry.value,
+          '\$path.\${entry.key}',
+          depth + 1,
+          nextCount,
+        );
+      }
+      return Map<String, Object?>.unmodifiable(frozen);
+    }
+    if (value is List) {
+      return List<Object?>.unmodifiable([
+        for (var i = 0; i < value.length; i++)
+          _freezeJsonValue(value[i], '\$path[\$i]', depth + 1, nextCount),
+      ]);
+    }
+    if (value == null || value is String || value is num || value is bool) {
+      return value;
+    }
+    throw JuiFormatException('Unsupported JSON value', path: path);
   }
 
   void _rejectUnknownKeys(Map<String, dynamic> value, Set<String> allowed, String path) {
