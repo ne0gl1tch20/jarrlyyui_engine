@@ -27,6 +27,7 @@ class JuiNode {
   final List<JuiNode> children;
 
   String? get text => properties['text'] as String?;
+  String? get bindingPath => properties['binding'] as String?;
   double? get number => (properties['fontSize'] as num?)?.toDouble();
   String? get actionId => (properties['action'] as Map?)?['id'] as String?;
   Map<String, Object?> get actionArguments => Map<String, Object?>.from(
