@@ -59,7 +59,9 @@ void main() {
     expect(find.text('Player One'), findsOneWidget);
   });
 
-  testWidgets('renders an empty value for missing or non-string bindings', (tester) async {
+  testWidgets(
+    'renders an empty value for missing or non-string bindings',
+    (tester) async {
     final document = const JuiParser().parse(
       '{"schemaVersion":1,"screen":"home","root":{"type":"text","binding":"player.displayName"}}',
     );
@@ -77,6 +79,6 @@ void main() {
     );
 
     expect(find.text(''), findsOneWidget);
-  });
-
+    },
+  );
 }
