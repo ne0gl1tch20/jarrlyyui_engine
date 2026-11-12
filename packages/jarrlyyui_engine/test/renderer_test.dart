@@ -62,23 +62,25 @@ void main() {
   testWidgets(
     'renders an empty value for missing or non-string bindings',
     (tester) async {
-    final document = const JuiParser().parse(
-      '{"schemaVersion":1,"screen":"home","root":{"type":"text","binding":"player.displayName"}}',
-    );
+      final document = const JuiParser().parse(
+        '{"schemaVersion":1,"screen":"home","root":{"type":"text","binding":"player.displayName"}}',
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: JuiRenderer(
-            document: document,
-            state: const {'player': {'displayName': 42}},
-            onAction: (_, __) async {},
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: JuiRenderer(
+              document: document,
+              state: const {
+                'player': {'displayName': 42},
+              },
+              onAction: (_, __) async {},
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text(''), findsOneWidget);
+      expect(find.text(''), findsOneWidget);
     },
   );
 }
