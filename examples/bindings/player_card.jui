@@ -6,7 +6,7 @@
     "children": [
       {"type": "text", "text": "Player"},
       {"type": "text", "binding": "player.displayName"},
-      {"type": "text", "binding": "player.level"}
+      {"type": "text", "binding": "player.levelLabel"}
     ]
   }
 }
