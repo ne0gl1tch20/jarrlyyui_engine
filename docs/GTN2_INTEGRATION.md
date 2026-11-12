@@ -25,11 +25,11 @@ These are examples of the proposed screen contract, not a claim that every scree
 
 ## Current limitations that block full screen migration
 
-JUI v1 currently supports only column, row, padding, text, button and spacer. It does not yet support:
+JUI v1 currently supports column, row, padding, text, button, text input, bounded repeat collections and spacer. Current limits:
 
-- Typed live-state bindings for balances, progress, selected items, scores or round state.
-- Editable text/number input and validated input events for the number-guessing screen.
-- Repeating collections for save slots, traits, talents, mutators and relic inventories.
+- Read-only text bindings expose string values only. Numeric/boolean formatting and typed value widgets are not implemented.
+- Text inputs send candidate strings through a host callback. Number parsing, validation and persistence remain Dart responsibilities.
+- Repeat renders up to 100 host-provided map entries with string fields exposed as item bindings. It is not virtualized or scrollable.
 - Localization key lookup and locale fallback.
 - Scroll containers, responsive layout constraints, visual themes or reusable components.
 
@@ -39,9 +39,9 @@ Do not work around these gaps by embedding changing values in scripts, adding ga
 
 1. Keep the current GTN2 Flutter UI working as the fallback. Add the engine as a pinned dependency and package baseline JUI assets in the APK only after the package API is stable.
 2. Add host-side screen routing and a strict action registry. Each action ID must map to one host-owned function with typed argument validation. Unknown actions fail closed.
-3. Introduce typed read-only state bindings first. Dart supplies a snapshot/view model; JUI only selects and formats declared values. No JUI mutation of authoritative state.
-4. Add typed input controls and host events. The number guess is validated by existing Dart gameplay logic; JUI only collects and forwards the candidate value.
-5. Add safe repeated collections, scrolling and localization, then port low-risk screens before gameplay-critical screens.
+3. Use the current read-only string bindings for labels and host-provided display values. Add typed numeric/boolean presentation only when a concrete GTN2 screen requires it.
+4. Use the text input callback for candidate strings. The number guess is parsed and validated by existing Dart gameplay logic; JUI only collects and forwards the candidate value.
+5. Use bounded repeat templates for map-backed secondary collections. Add scrolling and localization before attempting large catalogs or long inventories.
 6. Port Home/More/Settings and verify navigation. Next port Save Slots and secondary systems. Port the active game screen only after input, state and validation paths are tested end to end.
 7. Keep the native Flutter screen available as a rollback path until the JUI screen passes parity tests on Android and Windows.
 8. Package all baseline .jui files as Flutter assets so the APK can render without a network connection. Remote updates, when implemented, are a separate signed layer with atomic activation and last-known-good rollback.
