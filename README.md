@@ -2,7 +2,7 @@
 
 A versioned, declarative UI language and Flutter runtime for applications that need updatable interfaces without moving application logic into a scripting VM.
 
-**Status:** early foundation. JUI v1 parsing, basic Flutter rendering, offline asset loading and GTN2 screen-shell examples are in progress. It is not yet a complete replacement for GTN2's current UI.
+**Status:** early foundation. JUI v1 parsing, Flutter rendering, offline asset loading, read-only string bindings, host-dispatched text inputs and bounded repeat collections are implemented. It is not yet a complete replacement for GTN2's current UI.
 
 ## Design boundary
 
@@ -23,9 +23,9 @@ A versioned, declarative UI language and Flutter runtime for applications that n
 
 ## Current implementation
 
-JUI v1 provides a strict JSON-based .jui format, parser/validator, Flutter renderer and AssetBundle loader. Current nodes are intentionally small: column, row, padding, text, button and spacer.
+JUI v1 provides a strict JSON-based .jui format, parser/validator, Flutter renderer and AssetBundle loader. Current nodes are intentionally small: column, row, padding, text, button, input, repeat and spacer.
 
-The GTN2 examples establish screen IDs and host action contracts. They are integration scaffolding, not a claim that dynamic gameplay UI is already implemented. V1 does not yet provide typed live-state bindings, editable input controls, localization lookup, lists, scrolling or visual themes. Those capabilities must be added deliberately with compatibility tests before replacing interactive GTN2 screens.
+The GTN2 examples establish screen IDs and host action contracts. They are integration scaffolding, not a claim that dynamic gameplay UI is already implemented. V1 supports read-only string bindings, text inputs dispatched to a typed host callback and bounded rendering of host-provided map collections. It does not yet provide typed numeric/boolean formatting, localization lookup, virtualized scrolling or visual themes. Those capabilities must be added deliberately with compatibility tests before replacing interactive GTN2 screens.
 
 A future human-friendly syntax may compile into the same document model; it must not become a second runtime or move game logic out of Dart.
 
