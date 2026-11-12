@@ -42,7 +42,8 @@ Example:
 | padding | type, one children entry | 16 logical-pixel inset |
 | text | type, exactly one of text or binding, optional fontSize | Static label or read-only string binding |
 | button | type, text, action | Host-dispatched action |
-| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback |\n| repeat | type, binding, exactly one child template | Renders up to 100 map entries from a host-provided list |
+| input | type, id, label, optional placeholder and binding | Editable text field; changes are sent to a typed host callback 
+| repeat | type, binding, exactly one child template | Renders up to 100 map entries from a host-provided list |
 | spacer | type | Fixed vertical spacing |
 
 Unknown fields and node types are rejected. Literal text is limited to 4,000 characters. A text node may instead declare a `binding` path such as `player.displayName`; paths use dot-separated identifier segments only. The Dart host supplies the state map to the renderer. JUI can read only string values through text nodes. Missing paths and non-string values render as an empty string. Binding values are never evaluated as expressions and cannot invoke host methods. Font size is limited to 8–72. The parser defaults to a 256 KiB document limit, 32 levels of nesting and 2,000 nodes. A container may have at most 200 children.
