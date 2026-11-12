@@ -111,8 +111,7 @@ class JuiParser {
       final id = value['id'];
       final label = value['label'];
       final placeholder = value['placeholder'];
-      if (id is! String ||
-          !RegExp(r'^[a-z][a-z0-9_.-]{0,79}
+      if (id is! String || !RegExp(r'^[a-z][a-z0-9_.-]{0,79}$').hasMatch(id)) {
         throw JuiFormatException('Invalid input id', path: '$path.id');
       }
       if (label is! String || label.isEmpty || label.length > 120) {
