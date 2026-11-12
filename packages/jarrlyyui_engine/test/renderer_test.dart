@@ -119,7 +119,7 @@ void main() {
 
   testWidgets('renders bounded collection templates with item bindings', (tester) async {
     final document = const JuiParser().parse(
-      '{"schemaVersion":1,"screen":"inventory","root":{"type":"repeat","binding":"inventory.items","children":{"type":"row","children":[{"type":"text","binding":"item.name"},{"type":"text","binding":"item.quantity"}]}}}',
+      '{"schemaVersion":1,"screen":"inventory","root":{"type":"repeat","binding":"inventory.items","children":[{"type":"row","children":[{"type":"text","binding":"item.name"},{"type":"text","binding":"item.quantity"}]}]}}',
     );
 
     await tester.pumpWidget(
