@@ -29,21 +29,39 @@ class JuiRenderer extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _buildNode(document.root);
 
-  String _resolveTextBinding(String path) {
-    Object? value = state;
-    for (final segment in path.split('.')) {
+  String _resolveTextBinding(String path, {Map<String, Object?>? item}) {
+    final segments = path.split('.');
+    Object? value;
+    if (segments.first == 'item') {
+      value = item;
+      segments.removeAt(0);
+    } else {
+      value = state;
+    }
+    for (final segment in segments) {
       if (value is! Map) return '';
       value = value[segment];
     }
     return value is String ? value : '';
   }
 
-  Widget _buildNode(JuiNode node) {
+  Object? _resolveStateValue(String path) {
+    Object? value = state;
+    for (final segment in path.split('.')) {
+      if (value is! Map) return null;
+      value = value[segment];
+    }
+    return value;
+  }
+
+  Widget _buildNode(JuiNode node, {Map<String, Object?>? item}) {
     switch (node.type) {
       case 'column':
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: node.children.map(_buildNode).toList(growable: false),
+          children: node.children
+              .map((child) => _buildNode(child, item: item))
+              .toList(growable: false),
         );
       case 'row':
         return Row(
@@ -54,20 +72,20 @@ class JuiRenderer extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: node.children.isEmpty
               ? const SizedBox.shrink()
-              : _buildNode(node.children.single),
+              : _buildNode(node.children.single, item: item),
         );
       case 'text':
         return Text(
           node.bindingPath == null
               ? node.text!
-              : _resolveTextBinding(node.bindingPath!),
+              : _resolveTextBinding(node.bindingPath!, item: item),
           style: TextStyle(fontSize: node.number),
         );
       case 'input':
         return TextFormField(
           initialValue: node.bindingPath == null
               ? null
-              : _resolveTextBinding(node.bindingPath!),
+              : _resolveTextBinding(node.bindingPath!, item: item),
           enabled: onInput != null,
           decoration: InputDecoration(
             labelText: node.label,
@@ -76,6 +94,30 @@ class JuiRenderer extends StatelessWidget {
           onChanged: onInput == null
               ? null
               : (value) => onInput!(node.inputId!, value),
+        );
+      case 'repeat':
+        final collection = _resolveStateValue(node.bindingPath!);
+        if (collection is! List) return const SizedBox.shrink();
+        final children = <Widget>[];
+        for (var index = 0;
+            index < collection.length && index < 100;
+            index++) {
+          final entry = collection[index];
+          if (entry is Map && entry.keys.every((key) => key is String)) {
+            children.add(
+              KeyedSubtree(
+                key: ValueKey<int>(index),
+                child: _buildNode(
+                  node.children.single,
+                  item: Map<String, Object?>.from(entry),
+                ),
+              ),
+            );
+          }
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
         );
       case 'button':
         return ElevatedButton(
